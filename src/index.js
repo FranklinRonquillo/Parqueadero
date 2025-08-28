@@ -59,17 +59,12 @@ function asegurarSesion(req, res, next) {
   }
 }
 
-app.use("/usuarios", usuariosRoutes);
-app.use("/parqueaderos", parqueaderosRoutes);
-app.use("/vehiculos", vehiculosRoutes);
+app.use("/usuarios", asegurarSesion, usuariosRoutes);
+app.use("/parqueaderos", asegurarSesion, parqueaderosRoutes);
+app.use("/vehiculos", asegurarSesion, vehiculosRoutes);
 app.use("/entradas", entradasRoutes);
 
-app.listen(3000, () => {
-  console.log("Example app listening on port 3000!");
-});
-
-// Endpoint POST
-app.post("/enviar-correo", (req, res) => {
+app.post("/enviar-correo", asegurarSesion, (req, res) => {
   const { email, placa, mensaje, parqueaderoNombre } = req.body;
 
   // Imprimir en log la solicitud recibida
@@ -83,4 +78,8 @@ app.post("/enviar-correo", (req, res) => {
   res.status(200).json({
     mensaje: "Correo Enviado",
   });
+});
+
+app.listen(3000, () => {
+  console.log("Example app listening on port 3000!");
 });
