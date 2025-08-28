@@ -5,6 +5,16 @@ import { Parqueadero } from "../models/parqueadero.js";
 export const registrarIngreso = async (req, res) => {
   try {
     const { vehiculo_id, parqueadero_id } = req.body;
+
+    // verificar si el parqueadero existe
+    const parqueadero = await Parqueadero.findByPk(parqueadero_id);
+    if (!parqueadero) {
+      return res.status(400).json({
+        mensaje: "No se puede Registrar Ingreso, no existe el parqueadero",
+      });
+    }
+
+    // verificar si el vehículo ya tiene un ingreso activo
     const entradaExistente = await Entrada.findOne({
       where: {
         vehiculo_id,
@@ -17,16 +27,35 @@ export const registrarIngreso = async (req, res) => {
           "No se puede Registrar Ingreso, ya existe la placa en este u otro parqueadero",
       });
     }
+
+    // contar cuántos vehículos hay actualmente en el parqueadero
+    const ocupados = await Entrada.count({
+      where: {
+        parqueadero_id,
+        horaSalida: null,
+      },
+    });
+
+    if (ocupados >= parqueadero.capacidad) {
+      return res.status(400).json({
+        mensaje: "No se puede Registrar Ingreso, el parqueadero está lleno",
+      });
+    }
+
+    // verificar que el vehículo exista
     const vehiculo = await Vehiculo.findByPk(vehiculo_id);
     if (!vehiculo) {
       return res.status(400).json({
         mensaje: "No se puede Registrar Ingreso, no existe el vehiculo",
       });
     }
-    vehiculo.update({
+
+    // actualizar el parqueadero_id en el vehículo
+    await vehiculo.update({
       parqueadero_id,
     });
 
+    // registrar el ingreso
     const ingreso = await Entrada.create({
       vehiculo_id,
       parqueadero_id,
@@ -36,13 +65,13 @@ export const registrarIngreso = async (req, res) => {
 
     res.status(201).json({
       id: ingreso.id,
+      mensaje: "Ingreso registrado correctamente",
     });
   } catch (error) {
     res.status(500).json({
       mensaje: "Error al registrar el ingreso",
       error,
     });
-    return;
   }
 };
 
