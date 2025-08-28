@@ -2,7 +2,11 @@ import { Parqueadero } from "../models/parqueadero.js";
 
 export const crearParqueadero = async (req, res) => {
   try {
-    const parqueaderoNuevo = await Parqueadero.create({});
+    const { capacidad, costo_hora } = req.body;
+    const parqueaderoNuevo = await Parqueadero.create({
+      capacidad,
+      costo_hora,
+    });
 
     res.status(200).json({
       error: false,

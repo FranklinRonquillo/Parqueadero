@@ -4,9 +4,8 @@ import sequelize from "../database/db.js";
 //modelo de vehiculo
 const Vehiculo = sequelize.define("vehiculos", {
   id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     primaryKey: true,
-    autoIncrement: true,
   },
   usuario_id: {
     type: DataTypes.INTEGER,

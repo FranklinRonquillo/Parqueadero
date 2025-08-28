@@ -10,6 +10,7 @@ import loginRoutes from "./routes/login.routes.js";
 import usuariosRoutes from "./routes/usuarios.routes.js";
 import parqueaderosRoutes from "./routes/parqueaderos.routes.js";
 import vehiculosRoutes from "./routes/vehiculos.routes.js";
+import entradasRoutes from "./routes/entradas.routes.js";
 
 dotenv.config();
 
@@ -61,7 +62,25 @@ function asegurarSesion(req, res, next) {
 app.use("/usuarios", usuariosRoutes);
 app.use("/parqueaderos", parqueaderosRoutes);
 app.use("/vehiculos", vehiculosRoutes);
+app.use("/entradas", entradasRoutes);
 
 app.listen(3000, () => {
   console.log("Example app listening on port 3000!");
+});
+
+// Endpoint POST
+app.post("/enviar-correo", (req, res) => {
+  const { email, placa, mensaje, parqueaderoNombre } = req.body;
+
+  // Imprimir en log la solicitud recibida
+  console.log("Solicitud recibida:");
+  console.log(`Email: ${email}`);
+  console.log(`Placa: ${placa}`);
+  console.log(`Mensaje: ${mensaje}`);
+  console.log(`Parqueadero: ${parqueaderoNombre}`);
+
+  // Respuesta
+  res.status(200).json({
+    mensaje: "Correo Enviado",
+  });
 });

@@ -11,6 +11,9 @@ const Parqueadero = sequelize.define("parqueaderos", {
   usuario_id: {
     type: DataTypes.INTEGER,
   },
+  capacidad: {
+    type: DataTypes.INTEGER,
+  },
   costo_hora: {
     type: DataTypes.INTEGER,
   },
