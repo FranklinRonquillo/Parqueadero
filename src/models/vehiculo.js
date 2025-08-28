@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../database/db.js";
 
-//modelo de parqueadero
-const Parqueadero = sequelize.define("parqueaderos", {
+//modelo de vehiculo
+const Vehiculo = sequelize.define("vehiculos", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -11,12 +11,12 @@ const Parqueadero = sequelize.define("parqueaderos", {
   usuario_id: {
     type: DataTypes.INTEGER,
   },
-  costo_hora: {
+  parqueadero_id: {
     type: DataTypes.INTEGER,
   },
 }, {
-  tableName: "parqueaderos", 
+  tableName: "vehiculos", 
   timestamps: false    
 });
 
-export { Parqueadero };
+export { Vehiculo };

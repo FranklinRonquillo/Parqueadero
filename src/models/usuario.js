@@ -25,9 +25,6 @@ const Usuario = sequelize.define("usuarios", {
     type: DataTypes.ENUM("admin", "socio"),
     allowNull: false,
   },
-  token: {
-    type: DataTypes.STRING,
-  },
 }, {
   tableName: "usuarios",   // asegura que Sequelize use tu tabla real
   timestamps: false        // evita errores con createdAt / updatedAt

@@ -1,5 +1,10 @@
 import Router from "express";
-import { Parqueadero } from "../models/parqueadero.js";
+
+import {
+  crearParqueadero,
+  obtenerParqueaderos,
+  agregarSocio,
+} from "../controller/parqueaderos.controller.js";
 
 const parqeuaderoRoutes = Router();
 
@@ -9,69 +14,12 @@ parqeuaderoRoutes.get("/", (req, res) => {
 
 //crear parqueadero
 
-parqeuaderoRoutes.post("/create", async (req, res) => {
-  try {
-    const parqueaderoNuevo = await Parqueadero.create({});
-
-    res.status(200).json({
-      error: false,
-      mensaje: "Parqueadero creado correctamente",
-      parqueadero: parqueaderoNuevo,
-    });
-  } catch (error) {
-    res.status(500).json({
-      mensaje: "Error al crear el parqueadero",
-      error,
-    });
-    return;
-  }
-});
+parqeuaderoRoutes.post("/create", crearParqueadero);
 
 //obtener parqueaderos
-parqeuaderoRoutes.get("/get", async (req, res) => {
-  try {
-    const parqueaderos = await Parqueadero.findAll();
-
-    res.status(200).json({
-      error: false,
-      mensaje: "parqueaderos obtenidos correctamente",
-      parqueaderos,
-    });
-  } catch (error) {
-    res.status(500).json({
-      mensaje: "Error al obtener los parqueaderos",
-      error,
-    });
-    return;
-  }
-});
+parqeuaderoRoutes.get("/get", obtenerParqueaderos);
 
 //agregar socio al parqueadero
-parqeuaderoRoutes.post("/addSocio", async (req, res) => {
-  try {
-    const { id, usuario_id } = req.body;
-    console.log(req.body);
-
-    const parqueadero = await Parqueadero.findByPk(id);
-    if (!parqueadero) {
-      return res.status(404).json({
-        mensaje: "Parqueadero no encontrado",
-      });
-    }
-
-    await parqueadero.update({ usuario_id: usuario_id });
-
-    res.status(200).json({
-      error: false,
-      mensaje: "Socio agregado correctamente al parqueadero",
-    });
-  } catch (error) {
-    res.status(500).json({
-      mensaje: "Error al agregar el socio al parqueadero",
-      error,
-    });
-    return;
-  }
-});
+parqeuaderoRoutes.post("/addSocio", agregarSocio);
 
 export default parqeuaderoRoutes;
