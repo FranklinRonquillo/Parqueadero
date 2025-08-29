@@ -4,13 +4,15 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cors from "cors";
 import db from "./database/db.js";
-import jwt from "jsonwebtoken";
 
+import "./models/relaciones.js";
 import loginRoutes from "./routes/login.routes.js";
 import usuariosRoutes from "./routes/usuarios.routes.js";
 import parqueaderosRoutes from "./routes/parqueaderos.routes.js";
 import vehiculosRoutes from "./routes/vehiculos.routes.js";
 import entradasRoutes from "./routes/entradas.routes.js";
+import indicadoresRoutes from "./routes/indicadores.routes.js";
+import { asegurarSesion, soloAdmin, soloSocio } from "./middleware/verificacion.js";
 
 dotenv.config();
 
@@ -31,40 +33,15 @@ app.get("/", (req, res) => {
 });
 
 // Rutas
-app.use("/api", loginRoutes);
+app.use("/login", loginRoutes);
 
-app.get("/protegido", asegurarSesion, (req, res) => {
-  res.send("API funcionando");
-});
-
-function asegurarSesion(req, res, next) {
-  console.log(req.headers);
-  const token = req.headers.authorization;
-  if (token) {
-    jwt.verify(token, "secret", (err, decoded) => {
-      if (err) {
-        return res.status(401).json({
-          error: true,
-          mensaje: "No se pudo verificar la sesión",
-        });
-      }
-      req.decoded = decoded;
-      next();
-    });
-  } else {
-    return res.status(401).json({
-      error: true,
-      mensaje: "No se encontro el token de autenticación",
-    });
-  }
-}
-
-app.use("/usuarios", asegurarSesion, usuariosRoutes);
-app.use("/parqueaderos", asegurarSesion, parqueaderosRoutes);
+app.use("/usuarios", asegurarSesion, soloAdmin, usuariosRoutes);
+app.use("/parqueaderos", asegurarSesion, soloAdmin, parqueaderosRoutes);
 app.use("/vehiculos", asegurarSesion, vehiculosRoutes);
-app.use("/entradas", entradasRoutes);
+app.use("/entradas", asegurarSesion, entradasRoutes);
+app.use("/indicadores", asegurarSesion, indicadoresRoutes);
 
-app.post("/enviar-correo", asegurarSesion, (req, res) => {
+app.post("/enviar-correo", asegurarSesion, soloAdmin, (req, res) => {
   const { email, placa, mensaje, parqueaderoNombre } = req.body;
 
   // Imprimir en log la solicitud recibida

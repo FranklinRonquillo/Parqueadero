@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../database/db.js";
-import { token } from "morgan";
 
 //modelo de usuario
 const Usuario = sequelize.define("usuarios", {
