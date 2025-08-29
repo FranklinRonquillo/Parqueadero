@@ -5,6 +5,12 @@ import { Vehiculo } from "../models/vehiculo.js";
 export const crearParqueadero = async (req, res) => {
   try {
     const { capacidad, costo_hora } = req.body;
+
+    if (capacidad==null || costo_hora==null){
+      return res.status(400).json({
+        mensaje: "Los campos 'capacidad' y 'costo_hora' son obligatorios",
+      });
+    }
     const parqueaderoNuevo = await Parqueadero.create({
       capacidad,
       costo_hora,
@@ -71,7 +77,7 @@ export const agregarSocio = async (req, res) => {
 
 export const listarParqueaderosSocio = async (req, res) => {
   try {
-    const socioId = req.usuario.id; // 👈 viene del token
+    const socioId = req.usuario.id; 
 
     const parqueaderos = await Parqueadero.findAll({
       where: { usuario_id: socioId },
@@ -86,10 +92,9 @@ export const listarParqueaderosSocio = async (req, res) => {
 
 export const listarVehiculosDeParqueadero = async (req, res) => {
   try {
-    const socioId = req.usuario.id; // viene del token
+    const socioId = req.usuario.id; 
     const { parqueadero_id } = req.params;
 
-    // Validar que ese parqueadero pertenece al socio
     const parqueadero = await Parqueadero.findOne({
       where: { id: parqueadero_id, usuario_id: socioId },
     });
@@ -105,7 +110,7 @@ export const listarVehiculosDeParqueadero = async (req, res) => {
       include: [
         {
           model: Vehiculo,
-          as: "vehiculo", // 👈 tiene que coincidir con el alias definido
+          as: "vehiculo",
         },
       ],
     });

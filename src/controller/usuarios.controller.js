@@ -3,6 +3,15 @@ import { Usuario } from "../models/usuario.js";
 export const crearUsuario = async (req, res) => {
   try {
     const { nombre, usuario, pass } = req.body;
+    
+    const usuarioExistente = await Usuario.findOne({
+      where: { usuario },
+    }); 
+    if(usuarioExistente){
+      return res.status(400).json({
+        mensaje: "El usuario ya existe",
+      });
+    }
 
     const usuarioNuevo = await Usuario.create({
       nombre,
