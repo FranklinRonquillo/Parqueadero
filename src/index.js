@@ -12,13 +12,45 @@ import parqueaderosRoutes from "./routes/parqueaderos.routes.js";
 import vehiculosRoutes from "./routes/vehiculos.routes.js";
 import entradasRoutes from "./routes/entradas.routes.js";
 import indicadoresRoutes from "./routes/indicadores.routes.js";
-import { asegurarSesion, soloAdmin, soloSocio } from "./middleware/verificacion.js";
+import {
+  asegurarSesion,
+  soloAdmin,
+  soloSocio,
+} from "./middleware/verificacion.js";
 
 dotenv.config();
 
 db.authenticate()
-  .then(() => console.log("Databse connection successful"))
+  .then(() => {
+    console.log("Database connection successful");
+    return db.sync(); // sincroniza modelos
+  })
+  .then(() => crearAdmin()) // crea admin si no existe
   .catch((error) => console.log("Connection error: ", error));
+
+import { Usuario } from "./models/usuario.js";
+
+// Verificar si existe admin, si no, crearlo
+async function crearAdmin() {
+  try {
+    const existeAdmin = await Usuario.findOne({
+      where: { usuario: "admin@mail.com" },
+    });
+
+    if (!existeAdmin) {
+      await Usuario.create({
+        usuario: "admin@mail.com",
+        pass: "admin", // 👈 luego lo ideal sería encriptar con bcrypt
+        rol: "Admin",
+      });
+      console.log("✅ Usuario admin creado: admin@mail.com / admin");
+    } else {
+      console.log("ℹ️ Usuario admin ya existe");
+    }
+  } catch (error) {
+    console.error("❌ Error al crear admin:", error);
+  }
+}
 
 const app = express();
 
@@ -36,7 +68,7 @@ app.get("/", (req, res) => {
 app.use("/login", loginRoutes);
 
 app.use("/usuarios", asegurarSesion, soloAdmin, usuariosRoutes);
-app.use("/parqueaderos", asegurarSesion, soloAdmin, parqueaderosRoutes);
+app.use("/parqueaderos", asegurarSesion, parqueaderosRoutes);
 app.use("/vehiculos", asegurarSesion, vehiculosRoutes);
 app.use("/entradas", asegurarSesion, entradasRoutes);
 app.use("/indicadores", asegurarSesion, indicadoresRoutes);

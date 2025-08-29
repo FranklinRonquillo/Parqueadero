@@ -1,4 +1,6 @@
 import { Parqueadero } from "../models/parqueadero.js";
+import { Entrada } from "../models/entrada.js";
+import { Vehiculo } from "../models/vehiculo.js";
 
 export const crearParqueadero = async (req, res) => {
   try {
@@ -64,5 +66,63 @@ export const agregarSocio = async (req, res) => {
       error,
     });
     return;
+  }
+};
+
+export const listarParqueaderosSocio = async (req, res) => {
+  try {
+    const socioId = req.usuario.id; // 👈 viene del token
+
+    const parqueaderos = await Parqueadero.findAll({
+      where: { usuario_id: socioId },
+    });
+
+    res.json(parqueaderos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener los parqueaderos" });
+  }
+};
+
+export const listarVehiculosDeParqueadero = async (req, res) => {
+  try {
+    const socioId = req.usuario.id; // viene del token
+    const { parqueadero_id } = req.params;
+
+    // Validar que ese parqueadero pertenece al socio
+    const parqueadero = await Parqueadero.findOne({
+      where: { id: parqueadero_id, usuario_id: socioId },
+    });
+
+    if (!parqueadero) {
+      return res
+        .status(403)
+        .json({ error: "No tienes acceso a este parqueadero" });
+    }
+
+    const entradas = await Entrada.findAll({
+      where: { parqueadero_id, horaSalida: null },
+      include: [
+        {
+          model: Vehiculo,
+          as: "vehiculo", // 👈 tiene que coincidir con el alias definido
+        },
+      ],
+    });
+
+    const vehiculos = entradas.map((e) => ({
+      id: e.vehiculo.id,
+      placa: e.vehiculo.placa,
+      tipo: e.vehiculo.tipo,
+      horaEntrada: e.horaEntrada,
+    }));
+
+    res.json(vehiculos);
+
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Error al obtener vehículos del parqueadero" });
   }
 };

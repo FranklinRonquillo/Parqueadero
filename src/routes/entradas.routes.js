@@ -2,11 +2,6 @@ import Router from "express";
 import {
   registrarIngreso,
   registrarSalida,
-  topVehiculos,
-  topVehiculos10,
-  primera,
-  ganancias,
-  buscarVehiculosParqueados,
 } from "../controller/entradas.controller.js";
 
 const entradasRoutes = Router();

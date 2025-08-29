@@ -6,6 +6,7 @@ import {
   ganancias,
   buscarVehiculosParqueados,
 } from "../controller/indicadores.controller.js";
+import { soloSocio } from "../middleware/verificacion.js";
 
 const indicadoresRoutes = Router();
 
@@ -15,7 +16,7 @@ indicadoresRoutes.get("/top", topVehiculos);
 
 indicadoresRoutes.get("/primera", primera);
 
-indicadoresRoutes.post("/ganancias/:parqueadero_id", ganancias);
+indicadoresRoutes.post("/ganancias/:parqueadero_id",soloSocio, ganancias);
 
 indicadoresRoutes.get("/buscar", buscarVehiculosParqueados);
 

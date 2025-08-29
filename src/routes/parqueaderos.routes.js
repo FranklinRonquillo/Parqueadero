@@ -4,22 +4,38 @@ import {
   crearParqueadero,
   obtenerParqueaderos,
   agregarSocio,
+  listarParqueaderosSocio,
+  listarVehiculosDeParqueadero,
 } from "../controller/parqueaderos.controller.js";
 
-const parqeuaderoRoutes = Router();
+import { soloSocio,soloAdmin } from "../middleware/verificacion.js";
 
-parqeuaderoRoutes.get("/", (req, res) => {
+const parqueaderoRoutes = Router();
+
+parqueaderoRoutes.get("/", (req, res) => {
   res.send("Parqueaderos");
 });
 
 //crear parqueadero
-
-parqeuaderoRoutes.post("/create", crearParqueadero);
+parqueaderoRoutes.post("/create",soloAdmin, crearParqueadero);
 
 //obtener parqueaderos
-parqeuaderoRoutes.get("/get", obtenerParqueaderos);
+parqueaderoRoutes.get("/get",soloAdmin, obtenerParqueaderos);
 
 //agregar socio al parqueadero
-parqeuaderoRoutes.post("/addSocio", agregarSocio);
+parqueaderoRoutes.post("/addSocio",soloAdmin, agregarSocio);
 
-export default parqeuaderoRoutes;
+//listar parqueaderos socio
+parqueaderoRoutes.get(
+  "/mis-parqueaderos",
+  soloSocio,
+  listarParqueaderosSocio
+);
+
+parqueaderoRoutes.get(
+  "/:parqueadero_id",
+  soloSocio,
+  listarVehiculosDeParqueadero
+);
+
+export default parqueaderoRoutes;
