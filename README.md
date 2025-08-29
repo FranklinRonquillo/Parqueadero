@@ -74,7 +74,7 @@ src/
  │
  └── index.js              # Punto de entrada principal
 
-## Modelo entidad relación y la coleccion de postmas estan en el repositorio
+## Modelo entidad relación y la coleccion de postman estan en el repositorio
 
 
 
