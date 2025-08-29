@@ -30,5 +30,53 @@ Antes de correr el proyecto, asegúrate de tener instalado:
 
 ### 1. Clonar el repositorio
 ```bash
-git clone https://github.com/tu-usuario/sistema-parqueaderos.git
-cd sistema-parqueaderos
+git clone https://github.com/FranklinRonquillo/Parqueadero.git
+
+## Inicializar proyecto
+
+npm install
+
+## Correr proyecto
+
+npm start
+
+## Estructura del proyecto
+
+src/
+ ├── controller/           # Lógica de negocio de cada entidad
+ │   ├── entradas.controller.js
+ │   ├── indicadores.controller.js
+ │   ├── login.controller.js
+ │   ├── parqueaderos.controller.js
+ │   ├── usuarios.controller.js
+ │   └── vehiculos.controller.js
+ │
+ ├── database/             # Configuración de la base de datos
+ │   └── db.js
+ │
+ ├── middleware/           # Middlewares (auth, validaciones, etc.)
+ │   └── verificacion.js
+ │
+ ├── models/               # Modelos Sequelize
+ │   ├── entrada.js
+ │   ├── parqueadero.js
+ │   ├── relaciones.js
+ │   ├── usuario.js
+ │   └── vehiculo.js
+ │
+ ├── routes/               # Definición de rutas
+ │   ├── entradas.routes.js
+ │   ├── indicadores.routes.js
+ │   ├── login.routes.js
+ │   ├── parqueaderos.routes.js
+ │   ├── usuarios.routes.js
+ │   └── vehiculos.routes.js
+ │
+ └── index.js              # Punto de entrada principal
+
+## Modelo entidad relación
+
+
+<img width="479" height="564" alt="image" src="https://github.com/user-attachments/assets/38628bd1-00f1-4aeb-a5e8-f21e039844ec" />
+
+
