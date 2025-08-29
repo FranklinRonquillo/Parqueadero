@@ -74,9 +74,8 @@ src/
  │
  └── index.js              # Punto de entrada principal
 
-## Modelo entidad relación
+## Modelo entidad relación y la coleccion de postmas estan en el repositorio
 
 
-<img width="479" height="564" alt="image" src="https://github.com/user-attachments/assets/38628bd1-00f1-4aeb-a5e8-f21e039844ec" />
 
 
