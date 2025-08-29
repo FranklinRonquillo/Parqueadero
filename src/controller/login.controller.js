@@ -16,7 +16,6 @@ export const login = async (req, res) => {
       });
     }
 
-    // Generar token con id y rol del usuario
     const token = jwt.sign(
       { id: usuarioLogeado.id, rol: usuarioLogeado.rol },
       "secret",
@@ -34,4 +33,11 @@ export const login = async (req, res) => {
       error,
     });
   }
+};
+
+export const logout = (req, res) => {
+  res.status(200).json({
+    error: false,
+    mensaje: "Sesión cerrada.",
+  });
 };

@@ -65,7 +65,7 @@ app.get("/", (req, res) => {
 });
 
 // Rutas
-app.use("/login", loginRoutes);
+app.use("/autenticacion", loginRoutes);
 
 app.use("/usuarios", asegurarSesion, soloAdmin, usuariosRoutes);
 app.use("/parqueaderos", asegurarSesion, parqueaderosRoutes);
