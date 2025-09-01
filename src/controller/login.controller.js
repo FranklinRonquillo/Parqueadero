@@ -28,6 +28,7 @@ export const login = async (req, res) => {
       token,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       mensaje: "Error al loguear el usuario",
       error,
