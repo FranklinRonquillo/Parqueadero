@@ -9,13 +9,12 @@ export const autenticarUsuario = async (usuario, pass) => {
     error.status = 401;
     throw error;
   }
-
   // Generar token
   const token = jwt.sign(
-    { id: usuarioLogeado.id, rol: usuarioLogeado.rol },
-    process.env.JWT_SECRET || "secret",
-    { expiresIn: "6h" }
-  );
+  { id: usuario.id, email: usuario, rol: usuario.rol },
+  process.env.JWT_SECRET,
+  { expiresIn: "6h" }
+);
 
   return { usuarioLogeado, token };
 };
