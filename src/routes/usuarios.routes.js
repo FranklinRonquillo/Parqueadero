@@ -4,16 +4,10 @@ import {
   obtenerUsuarios,
 } from "../controller/usuarios.controller.js";
 
-const usuariosRoutes = Router();
+const router = Router();
 
-usuariosRoutes.get("/", (req, res) => {
-  res.send("Usuarios");
-});
+router.post("/create", crearUsuario);
 
-//crear usuario solo si tienes el rol admin
-usuariosRoutes.post("/create", crearUsuario);
+router.get("/get", obtenerUsuarios);
 
-//obtener usuarios
-usuariosRoutes.get("/get", obtenerUsuarios);
-
-export default usuariosRoutes;
+export default router;

@@ -1,133 +1,127 @@
-import { Parqueadero } from "../models/parqueadero.js";
-import { Entrada } from "../models/entrada.js";
-import { Vehiculo } from "../models/vehiculo.js";
+import {
+  crearParqueaderoService,
+  obtenerParqueaderosService,
+  agregarSocioService,
+  listarParqueaderosSocioService,
+  listarVehiculosDeParqueaderoService,
+} from "../services/parqueaderos.service.js";
 
 export const crearParqueadero = async (req, res) => {
   try {
     const { capacidad, costo_hora } = req.body;
 
-    if (capacidad==null || costo_hora==null){
+    // 🔹 Validación en el controlador
+    if (capacidad == null || costo_hora == null) {
       return res.status(400).json({
+        error: true,
         mensaje: "Los campos 'capacidad' y 'costo_hora' son obligatorios",
       });
     }
-    const parqueaderoNuevo = await Parqueadero.create({
-      capacidad,
-      costo_hora,
-    });
 
-    res.status(200).json({
+    const parqueaderoNuevo = await crearParqueaderoService({ capacidad, costo_hora });
+
+    res.status(201).json({
       error: false,
       mensaje: "Parqueadero creado correctamente",
       parqueadero: parqueaderoNuevo,
     });
   } catch (error) {
-    res.status(500).json({
-      mensaje: "Error al crear el parqueadero",
-      error,
+    console.error("Error en crearParqueadero:", error);
+    res.status(error.status || 500).json({
+      error: true,
+      mensaje: error.message || "Error al crear el parqueadero",
     });
-    return;
   }
 };
 
 export const obtenerParqueaderos = async (req, res) => {
   try {
-    const parqueaderos = await Parqueadero.findAll();
-
+    const parqueaderos = await obtenerParqueaderosService();
     res.status(200).json({
       error: false,
-      mensaje: "parqueaderos obtenidos correctamente",
+      mensaje: "Parqueaderos obtenidos correctamente",
       parqueaderos,
     });
   } catch (error) {
-    res.status(500).json({
-      mensaje: "Error al obtener los parqueaderos",
-      error,
+    console.error("Error en obtenerParqueaderos:", error);
+    res.status(error.status || 500).json({
+      error: true,
+      mensaje: error.message || "Error al obtener los parqueaderos",
     });
-    return;
   }
 };
 
 export const agregarSocio = async (req, res) => {
   try {
     const { id, usuario_id } = req.body;
-    console.log(req.body);
 
-    const parqueadero = await Parqueadero.findByPk(id);
-    if (!parqueadero) {
-      return res.status(404).json({
-        mensaje: "Parqueadero no encontrado",
+    // 🔹 Validación en el controlador
+    if (!id || !usuario_id) {
+      return res.status(400).json({
+        error: true,
+        mensaje: "Los campos 'id' y 'usuario_id' son obligatorios",
       });
     }
 
-    await parqueadero.update({ usuario_id: usuario_id });
+    await agregarSocioService({ id, usuario_id });
 
     res.status(200).json({
       error: false,
       mensaje: "Socio agregado correctamente al parqueadero",
     });
   } catch (error) {
-    res.status(500).json({
-      mensaje: "Error al agregar el socio al parqueadero",
-      error,
+    console.error("Error en agregarSocio:", error);
+    res.status(error.status || 500).json({
+      error: true,
+      mensaje: error.message || "Error al agregar socio al parqueadero",
     });
-    return;
   }
 };
 
 export const listarParqueaderosSocio = async (req, res) => {
   try {
-    const socioId = req.usuario.id; 
+    const socioId = req.usuario.id;
+    const parqueaderos = await listarParqueaderosSocioService(socioId);
 
-    const parqueaderos = await Parqueadero.findAll({
-      where: { usuario_id: socioId },
+    res.status(200).json({
+      error: false,
+      mensaje: "Parqueaderos del socio obtenidos correctamente",
+      parqueaderos,
     });
-
-    res.json(parqueaderos);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al obtener los parqueaderos" });
+    console.error("Error en listarParqueaderosSocio:", error);
+    res.status(error.status || 500).json({
+      error: true,
+      mensaje: error.message || "Error al obtener los parqueaderos del socio",
+    });
   }
 };
 
 export const listarVehiculosDeParqueadero = async (req, res) => {
   try {
-    const socioId = req.usuario.id; 
+    const socioId = req.usuario.id;
     const { parqueadero_id } = req.params;
 
-    const parqueadero = await Parqueadero.findOne({
-      where: { id: parqueadero_id, usuario_id: socioId },
-    });
-
-    if (!parqueadero) {
-      return res
-        .status(403)
-        .json({ error: "No tienes acceso a este parqueadero" });
+    // 🔹 Validación en el controlador
+    if (!parqueadero_id) {
+      return res.status(400).json({
+        error: true,
+        mensaje: "El campo 'parqueadero_id' es obligatorio",
+      });
     }
 
-    const entradas = await Entrada.findAll({
-      where: { parqueadero_id, horaSalida: null },
-      include: [
-        {
-          model: Vehiculo,
-          as: "vehiculo",
-        },
-      ],
+    const vehiculos = await listarVehiculosDeParqueaderoService({ socioId, parqueadero_id });
+
+    res.status(200).json({
+      error: false,
+      mensaje: "Vehículos obtenidos correctamente",
+      vehiculos,
     });
-
-    const vehiculos = entradas.map((e) => ({
-      id: e.vehiculo.id,
-      placa: e.vehiculo.placa,
-      tipo: e.vehiculo.tipo,
-      horaEntrada: e.horaEntrada,
-    }));
-
-    res.json(vehiculos);
-
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ error: "Error al obtener vehículos del parqueadero" });
+    console.error("Error en listarVehiculosDeParqueadero:", error);
+    res.status(error.status || 500).json({
+      error: true,
+      mensaje: error.message || "Error al obtener vehículos del parqueadero",
+    });
   }
 };

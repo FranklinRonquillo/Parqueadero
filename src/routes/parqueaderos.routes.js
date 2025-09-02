@@ -10,32 +10,25 @@ import {
 
 import { soloSocio,soloAdmin } from "../middleware/verificacion.js";
 
-const parqueaderoRoutes = Router();
+const router = Router();
 
-parqueaderoRoutes.get("/", (req, res) => {
-  res.send("Parqueaderos");
-});
+router.post("/create",soloAdmin, crearParqueadero);
 
-//crear parqueadero
-parqueaderoRoutes.post("/create",soloAdmin, crearParqueadero);
+router.get("/get",soloAdmin, obtenerParqueaderos);
 
-//obtener parqueaderos
-parqueaderoRoutes.get("/get",soloAdmin, obtenerParqueaderos);
-
-//agregar socio al parqueadero
-parqueaderoRoutes.post("/addSocio",soloAdmin, agregarSocio);
+router.post("/addSocio",soloAdmin, agregarSocio);
 
 //listar parqueaderos socio
-parqueaderoRoutes.get(
+router.get(
   "/mis-parqueaderos",
   soloSocio,
   listarParqueaderosSocio
 );
 
-parqueaderoRoutes.get(
+router.get(
   "/:parqueadero_id",
   soloSocio,
   listarVehiculosDeParqueadero
 );
 
-export default parqueaderoRoutes;
+export default router;

@@ -1,11 +1,13 @@
 import express from "express";
+
 import "../models/relaciones.js";
 import loginRoutes from "./login.routes.js";
 import usuariosRoutes from "./usuarios.routes.js";
-import parqueaderosRoutes from "./parqueaderos.routes.js";
 import vehiculosRoutes from "./vehiculos.routes.js";
+import parqueaderosRoutes from "./parqueaderos.routes.js";
 import entradasRoutes from "./entradas.routes.js";
 import indicadoresRoutes from "./indicadores.routes.js";
+
 import {
   asegurarSesion,
   soloAdmin,
@@ -17,8 +19,8 @@ const app = express();
 app.use("/autenticacion", loginRoutes);
 
 app.use("/usuarios", asegurarSesion, soloAdmin, usuariosRoutes);
-app.use("/parqueaderos", asegurarSesion, parqueaderosRoutes);
 app.use("/vehiculos", asegurarSesion, vehiculosRoutes);
+app.use("/parqueaderos", asegurarSesion, parqueaderosRoutes);
 app.use("/entradas", asegurarSesion, entradasRoutes);
 app.use("/indicadores", asegurarSesion, indicadoresRoutes);
 

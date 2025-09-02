@@ -1,77 +1,29 @@
-import { Entrada } from "../models/entrada.js";
-import { Vehiculo } from "../models/vehiculo.js";
-import { Parqueadero } from "../models/parqueadero.js";
-import { Sequelize, fn, col, Op } from "sequelize";
+import { registrarIngresoService, registrarSalidaService } from "../services/entradas.service.js";
 
 export const registrarIngreso = async (req, res) => {
   try {
     const { vehiculo_id, parqueadero_id } = req.body;
 
-    // verificar si el parqueadero existe
-    const parqueadero = await Parqueadero.findByPk(parqueadero_id);
-    if (!parqueadero) {
+    if (!vehiculo_id || !parqueadero_id) {
       return res.status(400).json({
-        mensaje: "No se puede Registrar Ingreso, no existe el parqueadero",
+        error: true,
+        tipo: "DatosInvalidos",
+        mensaje: "Se requieren 'vehiculo_id' y 'parqueadero_id'",
       });
     }
 
-    // verificar si el vehículo ya tiene un ingreso activo
-    const entradaExistente = await Entrada.findOne({
-      where: {
-        vehiculo_id,
-        horaSalida: null,
-      },
-    });
-    if (entradaExistente) {
-      return res.status(400).json({
-        mensaje:
-          "No se puede Registrar Ingreso, ya existe la placa en este u otro parqueadero",
-      });
-    }
+    const ingreso = await registrarIngresoService(vehiculo_id, parqueadero_id);
 
-    // contar cuántos vehículos hay actualmente en el parqueadero
-    const ocupados = await Entrada.count({
-      where: {
-        parqueadero_id,
-        horaSalida: null,
-      },
-    });
-
-    if (ocupados >= parqueadero.capacidad) {
-      return res.status(400).json({
-        mensaje: "No se puede Registrar Ingreso, el parqueadero está lleno",
-      });
-    }
-
-    // verificar que el vehículo exista
-    const vehiculo = await Vehiculo.findByPk(vehiculo_id);
-    if (!vehiculo) {
-      return res.status(400).json({
-        mensaje: "No se puede Registrar Ingreso, no existe el vehiculo",
-      });
-    }
-
-    // actualizar el parqueadero_id en el vehículo
-    await vehiculo.update({
-      parqueadero_id,
-    });
-
-    // registrar el ingreso
-    const ingreso = await Entrada.create({
-      vehiculo_id,
-      parqueadero_id,
-      horaEntrada: new Date(),
-      horaSalida: null,
-    });
-
-    res.status(201).json({
-      id: ingreso.id,
+    return res.status(201).json({
+      error: false,
       mensaje: "Ingreso registrado correctamente",
+      ingreso,
     });
-  } catch (error) {
-    res.status(500).json({
-      mensaje: "Error al registrar el ingreso",
-      error,
+  } catch (err) {
+    return res.status(err.status || 500).json({
+      error: true,
+      tipo: err.tipo || "ErrorServidor",
+      mensaje: err.mensaje || "Error al registrar el ingreso",
     });
   }
 };
@@ -80,216 +32,27 @@ export const registrarSalida = async (req, res) => {
   try {
     const { vehiculo_id, parqueadero_id } = req.body;
 
-    const parqueadero = await Parqueadero.findByPk(parqueadero_id);
-    if (!parqueadero) {
+    if (!vehiculo_id || !parqueadero_id) {
       return res.status(400).json({
-        mensaje: "No se puede Registrar Salida, no existe el parqueadero",
+        error: true,
+        tipo: "DatosInvalidos",
+        mensaje: "Se requieren 'vehiculo_id' y 'parqueadero_id'",
       });
     }
-    const vehiculo = await Vehiculo.findOne({
-      where: {
-        id: vehiculo_id,
-      },
-    });
 
-    if (vehiculo.dataValues.parqueadero_id == null) {
-      return res.status(400).json({
-        mensaje:
-          "No se puede Registrar Salida, no existe la placa en el parqueadero",
-      });
-    }
-    console.log("hola");
+    const { costo, horas } = await registrarSalidaService(vehiculo_id, parqueadero_id);
 
-    const salidaExistente = await Entrada.findOne({
-      where: {
-        vehiculo_id,
-        parqueadero_id,
-        horaSalida: null,
-      },
-    });
-
-    const diferenciaMs = new Date() - salidaExistente.horaEntrada;
-
-    const horas = Math.ceil(diferenciaMs / (1000 * 60 * 60));
-
-    const costo = parqueadero.dataValues.costo_hora * horas;
-
-    salidaExistente.update({
-      horaSalida: new Date(),
+    return res.status(200).json({
+      error: false,
+      mensaje: "Salida registrada correctamente",
       costo,
+      horas,
     });
-    vehiculo.update({
-      parqueadero_id: null,
+  } catch (err) {
+    return res.status(err.status || 500).json({
+      error: true,
+      tipo: err.tipo || "ErrorServidor",
+      mensaje: err.mensaje || "Error al registrar la salida",
     });
-
-    res.status(200).json({
-      mensaje: "Salida registrada",
-    });
-  } catch (error) {
-    res.status(500).json({
-      mensaje: "Error al registrar la salida",
-      error,
-    });
-    return;
-  }
-};
-
-export const topVehiculos10 = async (req, res) => {
-  try {
-    const top10 = await Entrada.findAll({
-      attributes: [
-        "vehiculo_id",
-        [
-          Sequelize.fn("COUNT", Sequelize.col("vehiculo_id")),
-          "total_registros",
-        ],
-      ],
-      include: [
-        {
-          model: Vehiculo,
-          attributes: ["id"],
-        },
-      ],
-      group: ["vehiculo_id", "vehiculo.id"],
-      order: [[Sequelize.literal("total_registros"), "DESC"]],
-      limit: 10,
-    });
-
-    res.status(200).json(top10);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      mensaje: "Error al obtener los vehículos más registrados",
-      error,
-    });
-  }
-};
-
-export const topVehiculos = async (req, res) => {
-  try {
-    const resultados = await Entrada.findAll({
-      attributes: [
-        "vehiculo_id",
-        [fn("COUNT", col("vehiculo_id")), "total_registros"], // cuántas veces aparece
-      ],
-      include: [
-        {
-          model: Vehiculo,
-          attributes: ["id"], // si usas `id` como placa, aquí va
-        },
-        {
-          model: Parqueadero,
-          attributes: ["id", "capacidad", "costo_hora"], // opcional: info del parqueadero
-        },
-      ],
-      group: ["vehiculo_id", "vehiculo.id", "parqueadero.id"], // agrupar por vehículo y parqueadero
-      order: [[fn("COUNT", col("vehiculo_id")), "DESC"]], // orden descendente
-      limit: 10,
-    });
-
-    res.json(resultados);
-  } catch (error) {
-    console.error("Error en topVehiculos:", error);
-    res.status(500).json({ error: "Error al obtener el top de vehículos" });
-  }
-};
-
-export const primera = async (req, res) => {
-  try {
-    const resultados = await Entrada.findAll({
-      where: {
-        horaSalida: null, // actualmente parqueados
-        // excluir los que ya tuvieron alguna entrada en el mismo parqueadero
-        vehiculo_id: {
-          [Op.notIn]: Sequelize.literal(`(
-            SELECT e2.vehiculo_id 
-            FROM entradas e2 
-            WHERE e2.vehiculo_id = entradas.vehiculo_id 
-              AND e2.parqueadero_id = entradas.parqueadero_id 
-              AND e2.id < entradas.id
-          )`),
-        },
-      },
-      include: [
-        { model: Vehiculo, attributes: ["id"] },
-        { model: Parqueadero, attributes: ["id"] },
-      ],
-    });
-
-    res.json(resultados);
-  } catch (error) {
-    console.error("Error en vehiculosPrimeraVez:", error);
-    res
-      .status(500)
-      .json({ error: "Error al verificar vehículos en primera vez" });
-  }
-};
-
-export const ganancias = async (req, res) => {
-  try {
-    const { parqueadero_id } = req.params;
-
-    const hoy = new Date();
-    const inicioDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-    const inicioSemana = new Date(hoy);
-    inicioSemana.setDate(hoy.getDate() - hoy.getDay()); // Lunes
-    const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-    const inicioAnio = new Date(hoy.getFullYear(), 0, 1);
-
-    // Función auxiliar para obtener la suma
-    const calcularGanancia = async (inicio, fin) => {
-      return await Entrada.sum("costo", {
-        where: {
-          parqueadero_id,
-          horaSalida: {
-            [Op.between]: [inicio, fin],
-          },
-        },
-      });
-    };
-
-    const ganancias = {
-      hoy: await calcularGanancia(inicioDia, hoy),
-      semana: await calcularGanancia(inicioSemana, hoy),
-      mes: await calcularGanancia(inicioMes, hoy),
-      anio: await calcularGanancia(inicioAnio, hoy),
-    };
-
-    res.json(ganancias);
-  } catch (error) {
-    console.error("Error en gananciasParqueadero:", error);
-    res.status(500).json({ error: "Error al calcular ganancias" });
-  }
-};
-
-export const buscarVehiculosParqueados = async (req, res) => {
-  try {
-    const { id } = req.query; // ejemplo: /vehiculos/buscar?placa=HT
-
-    if (!id) {
-      return res.status(400).json({ error: "Debe enviar una placa para buscar" });
-    }
-
-    // Filtrar vehículos que estén parqueados (sin horaSalida)
-    const vehiculos = await Vehiculo.findAll({
-      include: [
-        {
-          model: Entrada,
-          where: {
-            horaSalida: null, // solo los que siguen parqueados
-          },
-        },
-      ],
-      where: {
-        id: {
-          [Op.like]: `%${id}%`, // coincidencia parcial
-        },
-      },
-    });
-
-    res.json(vehiculos);
-  } catch (error) {
-    console.error("Error en buscarVehiculosParqueados:", error);
-    res.status(500).json({ error: "Error al buscar vehículos" });
   }
 };

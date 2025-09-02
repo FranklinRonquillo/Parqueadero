@@ -6,20 +6,12 @@ import {
 } from "../controller/vehiculos.controller.js";
 import { soloAdmin } from "../middleware/verificacion.js";
 
-const vehiculosRoutes = Router();
+const router = Router();
 
-vehiculosRoutes.get("/", (req, res) => {
-  res.send("Vehiculos");
-});
+router.post("/create", crearVehiculo);
 
-//crear vehiculo
+router.get("/get", soloAdmin, obtenerVehiculos);
 
-vehiculosRoutes.post("/create", crearVehiculo);
+router.get("/get/:id", soloAdmin, obtenerVehiculosPorParqueadero);
 
-//obtener vehiculos
-vehiculosRoutes.get("/get", soloAdmin, obtenerVehiculos);
-
-//obtener vehiculos por parqueadero
-vehiculosRoutes.get("/get/:id", soloAdmin, obtenerVehiculosPorParqueadero);
-
-export default vehiculosRoutes;
+export default router;

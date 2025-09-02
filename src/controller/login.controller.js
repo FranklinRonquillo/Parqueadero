@@ -1,26 +1,17 @@
-import jwt from "jsonwebtoken";
-import { Usuario } from "../models/usuario.js";
+import { autenticarUsuario } from "../services/login.service.js";
 
 export const login = async (req, res) => {
   try {
     const { usuario, pass } = req.body;
 
-    const usuarioLogeado = await Usuario.findOne({
-      where: { usuario, pass },
-    });
-
-    if (!usuarioLogeado) {
-      return res.status(401).json({
+    if (!usuario || !pass) {
+      return res.status(400).json({
         error: true,
-        mensaje: "Usuario o contraseña incorrectos",
+        mensaje: "Faltan credenciales: usuario y contraseña son requeridos",
       });
     }
 
-    const token = jwt.sign(
-      { id: usuarioLogeado.id, rol: usuarioLogeado.rol },
-      "secret",
-      { expiresIn: "6h" }
-    );
+    const { token } = await autenticarUsuario(usuario, pass);
 
     res.status(200).json({
       error: false,
@@ -28,10 +19,11 @@ export const login = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      mensaje: "Error al loguear el usuario",
-      error,
+    console.error("Error en login:", error);
+
+    res.status(error.status || 500).json({
+      error: true,
+      mensaje: error.message || "Error interno del servidor",
     });
   }
 };

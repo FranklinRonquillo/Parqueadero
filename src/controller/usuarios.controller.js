@@ -1,53 +1,51 @@
-import { Usuario } from "../models/usuario.js";
+import {
+  crearUsuarioService,
+  obtenerUsuariosService,
+} from "../services/usuarios.service.js";
 
 export const crearUsuario = async (req, res) => {
   try {
     const { nombre, usuario, pass } = req.body;
-    
-    const usuarioExistente = await Usuario.findOne({
-      where: { usuario },
-    }); 
-    if(usuarioExistente){
+
+    if (!nombre || !usuario || !pass) {
       return res.status(400).json({
-        mensaje: "El usuario ya existe",
+        error: true,
+        mensaje: "Faltan datos: nombre, usuario y contraseña son obligatorios",
       });
     }
 
-    const usuarioNuevo = await Usuario.create({
-      nombre,
-      usuario,
-      pass,
-      rol: "Socio",
-    });
+    const usuarioNuevo = await crearUsuarioService({ nombre, usuario, pass });
 
-    res.status(200).json({
+    res.status(201).json({
       error: false,
       mensaje: "Usuario creado correctamente",
       usuario: usuarioNuevo,
     });
   } catch (error) {
-    res.status(500).json({
-      mensaje: "Error al crear el usuario",
-      error,
+    console.error("Error en crearUsuario:", error);
+
+    res.status(error.status || 500).json({
+      error: true,
+      mensaje: error.message || "Error interno al crear el usuario",
     });
-    return;
   }
 };
 
 export const obtenerUsuarios = async (req, res) => {
   try {
-    const usuarios = await Usuario.findAll();
+    const usuarios = await obtenerUsuariosService();
 
     res.status(200).json({
       error: false,
-      mensaje: "usuarios obtenidos correctamente",
+      mensaje: "Usuarios obtenidos correctamente",
       usuarios,
     });
   } catch (error) {
-    res.status(500).json({
-      mensaje: "Error al obtener los usuarios",
-      error,
+    console.error("Error en obtenerUsuarios:", error);
+
+    res.status(error.status || 500).json({
+      error: true,
+      mensaje: error.message || "Error interno al obtener los usuarios",
     });
-    return;
   }
 };

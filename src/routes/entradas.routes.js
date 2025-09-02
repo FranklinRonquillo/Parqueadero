@@ -4,14 +4,10 @@ import {
   registrarSalida,
 } from "../controller/entradas.controller.js";
 
-const entradasRoutes = Router();
+const router = Router();
 
-entradasRoutes.get("/", (req, res) => {
-  res.send("Entradas");
-});
+router.post("/registreIngreso", registrarIngreso);
 
-entradasRoutes.post("/registreIngreso", registrarIngreso);
+router.post("/registreSalida", registrarSalida);
 
-entradasRoutes.post("/registreSalida", registrarSalida);
-
-export default entradasRoutes;
+export default router;

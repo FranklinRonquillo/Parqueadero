@@ -8,16 +8,16 @@ import {
 } from "../controller/indicadores.controller.js";
 import { soloSocio } from "../middleware/verificacion.js";
 
-const indicadoresRoutes = Router();
+const router = Router();
 
-indicadoresRoutes.get("/top10", topVehiculos10);
+router.get("/top10", topVehiculos10);
 
-indicadoresRoutes.get("/top", topVehiculos);
+router.get("/top", topVehiculos);
 
-indicadoresRoutes.get("/primera", primera);
+router.get("/primera", primera);
 
-indicadoresRoutes.post("/ganancias/:parqueadero_id",soloSocio, ganancias);
+router.post("/ganancias/:parqueadero_id",soloSocio, ganancias);
 
-indicadoresRoutes.get("/buscar", buscarVehiculosParqueados);
+router.get("/buscar", buscarVehiculosParqueados);
 
-export default indicadoresRoutes;
+export default router;

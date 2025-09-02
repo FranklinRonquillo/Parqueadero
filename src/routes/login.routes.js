@@ -1,10 +1,9 @@
 import Router from "express";
 import { login, logout } from "../controller/login.controller.js";
 
-const loginRoutes = Router();
+const router = Router();
 
-loginRoutes.post("/login", login);
-loginRoutes.post("/logout", logout);
+router.post("/login", login);
+router.post("/logout", logout);
 
-
-export default loginRoutes;
+export default router;
