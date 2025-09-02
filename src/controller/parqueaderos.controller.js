@@ -10,7 +10,6 @@ export const crearParqueadero = async (req, res) => {
   try {
     const { capacidad, costo_hora } = req.body;
 
-    // 🔹 Validación en el controlador
     if (capacidad == null || costo_hora == null) {
       return res.status(400).json({
         error: true,
@@ -55,7 +54,6 @@ export const agregarSocio = async (req, res) => {
   try {
     const { id, usuario_id } = req.body;
 
-    // 🔹 Validación en el controlador
     if (!id || !usuario_id) {
       return res.status(400).json({
         error: true,
@@ -102,7 +100,6 @@ export const listarVehiculosDeParqueadero = async (req, res) => {
     const socioId = req.usuario.id;
     const { parqueadero_id } = req.params;
 
-    // 🔹 Validación en el controlador
     if (!parqueadero_id) {
       return res.status(400).json({
         error: true,
