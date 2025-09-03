@@ -5,10 +5,11 @@ import {
   obtenerVehiculosPorParqueadero,
 } from "../controller/vehiculos.controller.js";
 import { soloAdmin } from "../middleware/verificacion.js";
+import { validarVehiculo } from "../schemas/vehiculo.schema.js";
 
 const router = Router();
 
-router.post("/create", crearVehiculo);
+router.post("/create", validarVehiculo, crearVehiculo);
 
 router.get("/get", soloAdmin, obtenerVehiculos);
 

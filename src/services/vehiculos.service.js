@@ -9,6 +9,13 @@ export const crearVehiculoService = async ({ id, usuario_id }) => {
     throw error;
   }
 
+  const vehiculoExistente = await Vehiculo.findOne({ where: { id } });
+  if (vehiculoExistente) {
+    const error = new Error("Esta placa ya está registrada");
+    error.status = 400;
+    throw error;
+  }
+
   return await Vehiculo.create({ id, usuario_id });
 };
 

@@ -9,10 +9,11 @@ import {
 } from "../controller/parqueaderos.controller.js";
 
 import { soloSocio,soloAdmin } from "../middleware/verificacion.js";
+import { validarParqueadero } from "../schemas/parqueadero.schema.js";
 
 const router = Router();
 
-router.post("/create",soloAdmin, crearParqueadero);
+router.post("/create", validarParqueadero , soloAdmin, crearParqueadero);
 
 router.get("/get",soloAdmin, obtenerParqueaderos);
 
