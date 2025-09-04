@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 export const entradaSchema = Joi.object({
-  id: Joi.number().integer().optional(), // auto_increment, no se pasa al crear
+  id: Joi.number().integer().optional(),
 
   vehiculo_id: Joi.string().length(6).alphanum().required().messages({
     "string.base": "El vehiculo_id debe ser texto",
@@ -29,7 +29,6 @@ export const entradaSchema = Joi.object({
   }),
 });
 
-// Middleware de validación
 export function validarEntrada(req, res, next) {
   const { error } = entradaSchema.validate(req.body, { abortEarly: false });
 

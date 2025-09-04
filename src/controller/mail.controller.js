@@ -1,15 +1,15 @@
 import { notificarUsuarioService } from "../services/mail.service.js";
+import { BadRequestError } from "../utils/errors.js";
 
-export const notificarUsuario = async (req, res) => {
+export const notificarUsuario = async (req, res, next) => {
   const { id, mensaje, parqueaderoId } = req.body;
 
   const email = req.usuario.email;
 
   if (!email || !id || !mensaje || !parqueaderoId) {
-    return res.status(400).json({
-      error:
-        "Faltan datos obligatorios (id, mensaje, parqueaderoId)",
-    });
+    throw new BadRequestError(
+      "Faltan datos obligatorios (id, mensaje, parqueaderoId)"
+    );
   }
 
   try {
@@ -21,8 +21,6 @@ export const notificarUsuario = async (req, res) => {
     });
     res.json({ ok: true, correo: result });
   } catch (error) {
-    res.status(error.status || 500).json({
-      error: error.message || "Error interno en notificarUsuario",
-    });
+    next(error);
   }
 };

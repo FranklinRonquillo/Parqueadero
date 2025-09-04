@@ -1,18 +1,12 @@
 import { Vehiculo } from "../models/vehiculo.js";
 import { Entrada } from "../models/entrada.js";
+import { ConflictError } from "../utils/errors.js";
 
 export const crearVehiculoService = async ({ id, usuario_id }) => {
-  if (!id || id.length !== 6 || !/^[A-Za-z0-9]+$/.test(id)) {
-    const error = new Error("La placa debe tener 6 caracteres alfanuméricos");
-    error.status = 400;
-    throw error;
-  }
 
   const vehiculoExistente = await Vehiculo.findOne({ where: { id } });
   if (vehiculoExistente) {
-    const error = new Error("Esta placa ya está registrada");
-    error.status = 400;
-    throw error;
+    throw new ConflictError("Esta placa ya está registrada");
   }
 
   return await Vehiculo.create({ id, usuario_id });

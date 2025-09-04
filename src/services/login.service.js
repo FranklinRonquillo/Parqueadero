@@ -1,13 +1,13 @@
 import jwt from "jsonwebtoken";
 import { Usuario } from "../models/usuario.js";
 
+import { AuthError } from "../utils/errors.js";
+
 export const autenticarUsuario = async (usuario, pass) => {
   const usuarioLogeado = await Usuario.findOne({ where: { usuario, pass } });
 
   if (!usuarioLogeado) {
-    const error = new Error("Usuario o contraseña incorrectos");
-    error.status = 401;
-    throw error;
+    throw new AuthError("Usuario o contraseña incorrectos");
   }
 
   const token = jwt.sign(

@@ -14,6 +14,8 @@ import {
   soloAdmin,
 } from "../middleware/verificacion.js";
 
+import { errorHandler } from "../middleware/errorHandler.js";
+
 const app = express();
 
 // Rutas
@@ -25,5 +27,7 @@ app.use("/parqueaderos", asegurarSesion, parqueaderosRoutes);
 app.use("/entradas", asegurarSesion, entradasRoutes);
 app.use("/indicadores", asegurarSesion, indicadoresRoutes);
 app.use("/mail", asegurarSesion, mailRoutes);
+
+app.use(errorHandler);
 
 export default app;

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Vehiculo } from "../models/vehiculo.js";
+import { NotFoundError } from "../utils/errors.js";
 
 export const notificarUsuarioService = async ({
   email,
@@ -11,11 +12,9 @@ export const notificarUsuarioService = async ({
   const vehiculo = await Vehiculo.findOne({ where: { id } });
 
   if (!vehiculo) {
-    const error = new Error(
+    throw new NotFoundError(
       `El vehículo con id ${id} no está registrado en la base de datos`
     );
-    error.status = 404;
-    throw error;
   }
 
   const response = await axios.post(`${process.env.rutaMail}/enviarCorreo`, {

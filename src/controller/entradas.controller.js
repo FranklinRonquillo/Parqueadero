@@ -1,6 +1,6 @@
 import { registrarIngresoService, registrarSalidaService } from "../services/entradas.service.js";
 
-export const registrarIngreso = async (req, res) => {
+export const registrarIngreso = async (req, res, next) => {
   try {
     const { vehiculo_id, parqueadero_id } = req.body;
 
@@ -12,14 +12,11 @@ export const registrarIngreso = async (req, res) => {
       ingreso,
     });
   } catch (err) {
-    return res.status(err.status || 500).json({
-      tipo: err.tipo || "ErrorServidor",
-      mensaje: err.mensaje || "Error al registrar el ingreso",
-    });
+    next(err);
   }
 };
 
-export const registrarSalida = async (req, res) => {
+export const registrarSalida = async (req, res, next) => {
   try {
     const { vehiculo_id, parqueadero_id } = req.body;
 
@@ -32,9 +29,6 @@ export const registrarSalida = async (req, res) => {
       horas,
     });
   } catch (err) {
-    return res.status(err.status || 500).json({
-      tipo: err.tipo || "ErrorServidor",
-      mensaje: err.mensaje || "Error al registrar la salida",
-    });
+    next(err);
   }
 };

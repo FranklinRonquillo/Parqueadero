@@ -1,4 +1,3 @@
-
 import { Router } from "express";
 
 import { notificarUsuario } from "../controller/mail.controller.js";

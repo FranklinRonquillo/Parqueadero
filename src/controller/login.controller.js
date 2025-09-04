@@ -1,13 +1,13 @@
 import { autenticarUsuario } from "../services/login.service.js";
 
-export const login = async (req, res) => {
+import { BadRequestError } from "../utils/errors.js";
+
+export const login = async (req, res, next) => {
   try {
     const { usuario, pass } = req.body;
 
     if (!usuario || !pass) {
-      return res.status(400).json({
-        mensaje: "Faltan credenciales: usuario y contraseña son requeridos",
-      });
+      throw new BadRequestError("Faltan credenciales: usuario y contraseña son requeridos");
     }
 
     const { token } = await autenticarUsuario(usuario, pass);
@@ -18,11 +18,7 @@ export const login = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.error("Error en login:", error);
-
-    res.status(error.status || 500).json({
-      mensaje: error.message || "Error interno del servidor",
-    });
+    next(error);
   }
 };
 

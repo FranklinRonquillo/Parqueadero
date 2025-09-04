@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 export const usuarioSchema = Joi.object({
-  id: Joi.number().integer().min(1).optional(), // porque es AUTO_INCREMENT
+  id: Joi.number().integer().min(1).optional(),
   nombre: Joi.string().max(35).required().messages({
     "string.base": "El nombre debe ser un texto",
     "string.empty": "El nombre no puede estar vacío",
@@ -23,7 +23,6 @@ export const usuarioSchema = Joi.object({
   }),
 });
 
-// Middleware genérico para validar usuarios
 export function validarUsuario(req, res, next) {
   const { error } = usuarioSchema.validate(req.body, { abortEarly: false });
 

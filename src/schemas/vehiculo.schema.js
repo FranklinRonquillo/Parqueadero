@@ -2,8 +2,8 @@ import Joi from "joi";
 
 export const vehiculoSchema = Joi.object({
   id: Joi.string()
-    .length(6) // exactamente 6 caracteres
-    .regex(/^[A-Za-z0-9]+$/) // solo letras y números
+    .length(6) 
+    .regex(/^[A-Za-z0-9]+$/)
     .required()
     .messages({
       "string.base": "La placa debe ser un texto",
@@ -20,13 +20,12 @@ export const vehiculoSchema = Joi.object({
 
   parqueadero_id: Joi.number()
     .integer()
-    .allow(null) // porque en la tabla puede ser NULL
+    .allow(null)
     .messages({
       "number.base": "El parqueadero_id debe ser un número o null",
     }),
 });
 
-// Middleware genérico para validar vehículos
 export function validarVehiculo(req, res, next) {
   const { error } = vehiculoSchema.validate(req.body, { abortEarly: false });
 

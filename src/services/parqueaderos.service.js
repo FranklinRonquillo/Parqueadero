@@ -1,6 +1,7 @@
 import { Parqueadero } from "../models/parqueadero.js";
 import { Entrada } from "../models/entrada.js";
 import { Vehiculo } from "../models/vehiculo.js";
+import { BadRequestError, NotFoundError, ForbiddenError } from "../utils/errors.js";
 
 export const crearParqueaderoService = async ({
   nombre,
@@ -19,9 +20,7 @@ export const editarParqueaderoService = async ({
   const parqueadero = await Parqueadero.findByPk(id);
 
   if (!parqueadero) {
-    const error = new Error("Parqueadero no encontrado");
-    error.status = 404;
-    throw error;
+    throw new NotFoundError("Parqueadero no encontrado");
   }
 
   if (capacidad < parqueadero.capacidad) {
@@ -31,11 +30,9 @@ export const editarParqueaderoService = async ({
     });
 
     if (vehiculosOcupando > capacidad) {
-      const error = new Error(
+      throw new BadRequestError( 
         `No se puede reducir la capacidad a ${capacidad}. Actualmente hay ${vehiculosOcupando} vehículos dentro.`
       );
-      error.status = 400;
-      throw error;
     }
   }
 
@@ -47,9 +44,7 @@ export const eliminarParqueaderoService = async (id, habilitado) => {
   const parqueadero = await Parqueadero.findByPk(id);
 
   if (!parqueadero) {
-    const error = new Error("Parqueadero no encontrado");
-    error.status = 404;
-    throw error;
+    throw new NotFoundError("Parqueadero no encontrado");
   }
 
   if (habilitado==="1") {
@@ -69,9 +64,7 @@ export const obtenerParqueaderosService = async () => {
 export const agregarSocioService = async ({ id, usuario_id }) => {
   const parqueadero = await Parqueadero.findByPk(id);
   if (!parqueadero) {
-    const error = new Error("Parqueadero no encontrado");
-    error.status = 404;
-    throw error;
+    throw new NotFoundError("Parqueadero no encontrado");
   }
 
   await parqueadero.update({ usuario_id });
@@ -91,9 +84,7 @@ export const listarVehiculosDeParqueaderoService = async ({
   });
 
   if (!parqueadero) {
-    const error = new Error("No tienes acceso a este parqueadero");
-    error.status = 403;
-    throw error;
+    throw new ForbiddenError("No tienes acceso a este parqueadero");
   }
 
   const entradas = await Entrada.findAll({

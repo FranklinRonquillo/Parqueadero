@@ -28,7 +28,6 @@ export const parqueaderoSchema = Joi.object({
   }),
 });
 
-// Middleware genérico para validar parqueaderos
 export function validarParqueadero(req, res, next) {
   const { error } = parqueaderoSchema.validate(req.body, { abortEarly: false });
 
