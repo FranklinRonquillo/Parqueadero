@@ -7,7 +7,6 @@ export const notificarUsuario = async (req, res) => {
 
   if (!email || !id || !mensaje || !parqueaderoId) {
     return res.status(400).json({
-      ok: false,
       error:
         "Faltan datos obligatorios (id, mensaje, parqueaderoId)",
     });
@@ -23,7 +22,6 @@ export const notificarUsuario = async (req, res) => {
     res.json({ ok: true, correo: result });
   } catch (error) {
     res.status(error.status || 500).json({
-      ok: false,
       error: error.message || "Error interno en notificarUsuario",
     });
   }

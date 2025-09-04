@@ -10,22 +10,19 @@ export const vehiculoSchema = Joi.object({
       "string.empty": "La placa no puede estar vacía",
       "string.length": "La placa debe tener exactamente 6 caracteres",
       "string.pattern.base": "La placa solo puede contener letras y números",
-      "any.required": "La placa es obligatoria"
+      "any.required": "La placa es obligatoria",
     }),
 
-  usuario_id: Joi.number()
-    .integer()
-    .required()
-    .messages({
-      "number.base": "El usuario_id debe ser un número",
-      "any.required": "El usuario_id es obligatorio"
-    }),
+  usuario_id: Joi.number().integer().required().messages({
+    "number.base": "El usuario_id debe ser un número",
+    "any.required": "El usuario_id es obligatorio",
+  }),
 
   parqueadero_id: Joi.number()
     .integer()
     .allow(null) // porque en la tabla puede ser NULL
     .messages({
-      "number.base": "El parqueadero_id debe ser un número o null"
+      "number.base": "El parqueadero_id debe ser un número o null",
     }),
 });
 
@@ -35,8 +32,7 @@ export function validarVehiculo(req, res, next) {
 
   if (error) {
     return res.status(400).json({
-      error: true,
-      mensajes: error.details.map(d => d.message)
+      mensajes: error.details.map((d) => d.message),
     });
   }
 

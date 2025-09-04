@@ -5,14 +5,11 @@ export function errorHandler(err, req, res, next) {
 
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({
-      success: false,
       error: err.message,
     });
   }
-
-  // Errores inesperados
+  
   res.status(500).json({
-    success: false,
     error: "Error interno del servidor",
   });
 }

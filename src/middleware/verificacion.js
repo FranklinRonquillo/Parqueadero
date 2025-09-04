@@ -6,7 +6,6 @@ function asegurarSesion(req, res, next) {
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {
         return res.status(401).json({
-          error: true,
           mensaje: "No se pudo verificar la sesión",
         });
       }
@@ -15,7 +14,6 @@ function asegurarSesion(req, res, next) {
     });
   } else {
     return res.status(401).json({
-      error: true,
       mensaje: "No se encontro el token de autenticación",
     });
   }
@@ -24,7 +22,6 @@ function asegurarSesion(req, res, next) {
 function soloAdmin(req, res, next) {
   if (req.usuario.rol !== "Admin") {
     return res.status(403).json({
-      error: true,
       mensaje: "Acceso denegado: solo administradores",
     });
   }
@@ -34,7 +31,6 @@ function soloAdmin(req, res, next) {
 function soloSocio(req, res, next) {
   if (req.usuario.rol !== "Socio") {
     return res.status(403).json({
-      error: true,
       mensaje: "Acceso denegado: solo socios",
     });
   }

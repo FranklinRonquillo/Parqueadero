@@ -18,7 +18,7 @@ export const notificarUsuarioService = async ({
     throw error;
   }
 
-  const response = await axios.post("http://localhost:4000/enviarCorreo", {
+  const response = await axios.post(`${process.env.rutaMail}/enviarCorreo`, {
     email,
     id,
     mensaje,

@@ -9,6 +9,6 @@ const router = Router();
 
 router.post("/registreIngreso", validarEntrada, registrarIngreso);
 
-router.post("/registreSalida", registrarSalida);
+router.post("/registreSalida", validarEntrada, registrarSalida);
 
 export default router;

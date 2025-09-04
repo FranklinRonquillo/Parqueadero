@@ -6,7 +6,6 @@ export const login = async (req, res) => {
 
     if (!usuario || !pass) {
       return res.status(400).json({
-        error: true,
         mensaje: "Faltan credenciales: usuario y contraseña son requeridos",
       });
     }
@@ -14,7 +13,7 @@ export const login = async (req, res) => {
     const { token } = await autenticarUsuario(usuario, pass);
 
     res.status(200).json({
-      error: false,
+      
       mensaje: "Usuario logueado correctamente",
       token,
     });
@@ -22,7 +21,6 @@ export const login = async (req, res) => {
     console.error("Error en login:", error);
 
     res.status(error.status || 500).json({
-      error: true,
       mensaje: error.message || "Error interno del servidor",
     });
   }
@@ -30,7 +28,7 @@ export const login = async (req, res) => {
 
 export const logout = (req, res) => {
   res.status(200).json({
-    error: false,
+    
     mensaje: "Sesión cerrada.",
   });
 };

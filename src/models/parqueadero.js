@@ -8,6 +8,9 @@ const Parqueadero = sequelize.define("parqueaderos", {
     primaryKey: true,
     autoIncrement: true,
   },
+  nombre: {
+    type: DataTypes.STRING,
+  },
   usuario_id: {
     type: DataTypes.INTEGER,
   },
@@ -16,6 +19,10 @@ const Parqueadero = sequelize.define("parqueaderos", {
   },
   costo_hora: {
     type: DataTypes.INTEGER,
+  },
+  habilitado: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
   },
 }, {
   tableName: "parqueaderos", 

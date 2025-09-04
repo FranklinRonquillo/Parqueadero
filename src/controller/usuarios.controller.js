@@ -9,7 +9,7 @@ export const crearUsuario = async (req, res) => {
 
     if (!nombre || !usuario || !pass) {
       return res.status(400).json({
-        error: true,
+        
         mensaje: "Faltan datos: nombre, usuario y contraseña son obligatorios",
       });
     }
@@ -17,7 +17,7 @@ export const crearUsuario = async (req, res) => {
     const usuarioNuevo = await crearUsuarioService({ nombre, usuario, pass });
 
     res.status(201).json({
-      error: false,
+      
       mensaje: "Usuario creado correctamente",
       usuario: usuarioNuevo,
     });
@@ -25,7 +25,7 @@ export const crearUsuario = async (req, res) => {
     console.error("Error en crearUsuario:", error);
 
     res.status(error.status || 500).json({
-      error: true,
+      
       mensaje: error.message || "Error interno al crear el usuario",
     });
   }
@@ -36,7 +36,7 @@ export const obtenerUsuarios = async (req, res) => {
     const usuarios = await obtenerUsuariosService();
 
     res.status(200).json({
-      error: false,
+      
       mensaje: "Usuarios obtenidos correctamente",
       usuarios,
     });
@@ -44,7 +44,7 @@ export const obtenerUsuarios = async (req, res) => {
     console.error("Error en obtenerUsuarios:", error);
 
     res.status(error.status || 500).json({
-      error: true,
+      
       mensaje: error.message || "Error interno al obtener los usuarios",
     });
   }

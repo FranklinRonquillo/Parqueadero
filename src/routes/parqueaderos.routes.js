@@ -6,6 +6,8 @@ import {
   agregarSocio,
   listarParqueaderosSocio,
   listarVehiculosDeParqueadero,
+  editarParqueadero,
+  eliminarParqueadero,
 } from "../controller/parqueaderos.controller.js";
 
 import { soloSocio,soloAdmin } from "../middleware/verificacion.js";
@@ -13,9 +15,13 @@ import { validarParqueadero } from "../schemas/parqueadero.schema.js";
 
 const router = Router();
 
+router.get("/get",soloAdmin, obtenerParqueaderos);
+
 router.post("/create", validarParqueadero , soloAdmin, crearParqueadero);
 
-router.get("/get",soloAdmin, obtenerParqueaderos);
+router.post("/editar/:id", validarParqueadero, soloAdmin, editarParqueadero);
+
+router.put("/delete/:id/:habilitado", soloAdmin, eliminarParqueadero);
 
 router.post("/addSocio",soloAdmin, agregarSocio);
 
