@@ -6,9 +6,9 @@ import {
 
 export const crearVehiculo = async (req, res, next) => {
   try {
-    const { id, usuario_id } = req.body;
+    const { id } = req.body;
 
-    const vehiculo = await crearVehiculoService({ id, usuario_id });
+    const vehiculo = await crearVehiculoService({ id });
 
     res.status(201).json({
       mensaje: "Vehículo creado correctamente",

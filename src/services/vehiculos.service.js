@@ -3,18 +3,14 @@ import { Entrada } from "../models/entrada.js";
 import { Parqueadero } from "../models/parqueadero.js";
 import { ConflictError, NotFoundError } from "../utils/errors.js";
 
-export const crearVehiculoService = async ({ id, usuario_id }) => {
+export const crearVehiculoService = async ({ id }) => {
   const vehiculoExistente = await Vehiculo.findOne({ where: { id } });
-  const userExistente = await Vehiculo.findOne({ where: { usuario_id } });
-  if (!userExistente) {
-    throw new NotFoundError("No existe el usuario");
-  }
-  
+
   if (vehiculoExistente) {
     throw new ConflictError("Esta placa ya está registrada");
   }
 
-  return await Vehiculo.create({ id, usuario_id });
+  return await Vehiculo.create({ id });
 };
 
 export const obtenerVehiculosService = async () => {

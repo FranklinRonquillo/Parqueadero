@@ -17,16 +17,6 @@ Parqueadero.belongsTo(Usuario, {
   targetKey: "id",
 });
 
-// Usuario - Vehiculo
-Usuario.hasMany(Vehiculo, {
-  foreignKey: "usuario_id",
-  sourceKey: "id",
-});
-Vehiculo.belongsTo(Usuario, {
-  foreignKey: "usuario_id",
-  targetKey: "id",
-});
-
 // Parqueadero - Vehiculo
 Parqueadero.hasMany(Vehiculo, {
   foreignKey: "parqueadero_id",

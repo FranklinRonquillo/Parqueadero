@@ -13,11 +13,6 @@ export const vehiculoSchema = Joi.object({
       "any.required": "La placa es obligatoria",
     }),
 
-  usuario_id: Joi.number().integer().required().messages({
-    "number.base": "El usuario_id debe ser un número",
-    "any.required": "El usuario_id es obligatorio",
-  }),
-
   parqueadero_id: Joi.number()
     .integer()
     .allow(null)
