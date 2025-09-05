@@ -22,7 +22,7 @@ export const topVehiculos10 = async (req, res, next) => {
 
 export const topVehiculos = async (req, res, next) => {
   try {
-    const data = await getTopVehiculos();
+    const data = await getTopVehiculos(req.usuario);
     res.status(200).json(data);
   } catch (error) {
     next(error);
@@ -31,7 +31,7 @@ export const topVehiculos = async (req, res, next) => {
 
 export const primera = async (req, res, next) => {
   try {
-    const data = await getVehiculosPrimeraVez();
+    const data = await getVehiculosPrimeraVez(req.usuario);
     res.status(200).json(data);
   } catch (error) {
     next(error);
@@ -45,7 +45,7 @@ export const ganancias = async (req, res, next) => {
       throw new BadRequestError("Debe enviar parqueadero_id");
     }
 
-    const data = await getGanancias(parqueadero_id);
+    const data = await getGanancias(parqueadero_id, req.usuario);
     res.status(200).json(data);
   } catch (error) {
     next(error);
@@ -59,7 +59,7 @@ export const buscarVehiculosParqueados = async (req, res, next) => {
       throw new BadRequestError("Debe enviar la placa para buscar");
     }
 
-    const data = await buscarVehiculosParqueadosService(id);
+    const data = await buscarVehiculosParqueadosService(id, req.usuario);
 
     res.status(200).json(data);
   } catch (error) {

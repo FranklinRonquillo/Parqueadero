@@ -5,6 +5,11 @@ import { ConflictError, NotFoundError } from "../utils/errors.js";
 
 export const crearVehiculoService = async ({ id, usuario_id }) => {
   const vehiculoExistente = await Vehiculo.findOne({ where: { id } });
+  const userExistente = await Vehiculo.findOne({ where: { usuario_id } });
+  if (!userExistente) {
+    throw new NotFoundError("No existe el usuario");
+  }
+  
   if (vehiculoExistente) {
     throw new ConflictError("Esta placa ya está registrada");
   }
