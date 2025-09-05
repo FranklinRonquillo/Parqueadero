@@ -18,14 +18,14 @@ function asegurarSesion(req, res, next) {
 }
 
 function soloAdmin(req, res, next) {
-  if (req.usuario.rol !== "Admin") {
+  if (req.usuario.rol !== "admin") {
     throw new ForbiddenError("Acceso denegado: solo administradores");
   }
   next();
 }
 
 function soloSocio(req, res, next) {
-  if (req.usuario.rol !== "Socio") {
+  if (req.usuario.rol !== "socio") {
     throw new ForbiddenError("Acceso denegado: solo socios");
   }
   next();

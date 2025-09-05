@@ -15,7 +15,7 @@ export const crearUsuarioService = async ({ nombre, usuario, pass }) => {
     nombre,
     usuario,
     pass: hashedPassword,
-    rol: "Socio",
+    rol: "socio",
   });
 
   return usuarioNuevo;
