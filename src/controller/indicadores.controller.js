@@ -9,12 +9,16 @@ import { BadRequestError } from "../utils/errors.js";
 
 export const topVehiculos10 = async (req, res, next) => {
   try {
-    const data = await getTopVehiculos10();
-    res.status(200).json(data);
+    const vehiculos = await getTopVehiculos10(req.usuario);
+    res.status(200).json({
+      mensaje: "Top 10 vehículos obtenidos correctamente",
+      vehiculos,
+    });
   } catch (error) {
     next(error);
   }
 };
+
 
 export const topVehiculos = async (req, res, next) => {
   try {

@@ -80,7 +80,7 @@ export const listarVehiculosDeParqueaderoService = async ({
   parqueadero_id,
 }) => {
   const parqueadero = await Parqueadero.findOne({
-    where: { id: parqueadero_id, usuario_id: socioId },
+    where: { id: parqueadero_id, usuario_id: socioId, habilitado: true },
   });
 
   if (!parqueadero) {

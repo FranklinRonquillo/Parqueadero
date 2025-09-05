@@ -3,19 +3,43 @@ import { Vehiculo } from "../models/vehiculo.js";
 import { Parqueadero } from "../models/parqueadero.js";
 import { Sequelize, fn, col, Op } from "sequelize";
 
-// TOP 10 vehículos
-export const getTopVehiculos10 = async () => {
-  return await Entrada.findAll({
-    attributes: [
-      "vehiculo_id",
-      [Sequelize.fn("COUNT", Sequelize.col("vehiculo_id")), "total_registros"],
-    ],
-    include: [{ model: Vehiculo, attributes: ["id"] }],
-    group: ["vehiculo_id", "vehiculo.id"],
-    order: [[Sequelize.literal("total_registros"), "DESC"]],
-    limit: 10,
-  });
+export const getTopVehiculos10 = async (usuario) => {
+  if (usuario.rol === "admin") {
+    return await Entrada.findAll({
+      attributes: [
+        "vehiculo_id",
+        [Sequelize.fn("COUNT", Sequelize.col("vehiculo_id")), "total_registros"],
+      ],
+      include: [{ model: Vehiculo, attributes: ["id"] }],
+      group: ["vehiculo_id", "vehiculo.id"],
+      order: [[Sequelize.literal("total_registros"), "DESC"]],
+      limit: 10,
+    });
+  }
+
+  if (usuario.rol === "socio") {
+    return await Entrada.findAll({
+      attributes: [
+        "vehiculo_id",
+        [Sequelize.fn("COUNT", Sequelize.col("vehiculo_id")), "total_registros"],
+      ],
+      include: [{ model: Vehiculo, attributes: ["id"] }],
+      where: {
+        parqueadero_id: {
+          [Op.in]: Sequelize.literal(
+            `(SELECT id FROM parqueaderos WHERE usuario_id = ${usuario.id})`
+          ),
+        },
+      },
+      group: ["vehiculo_id", "vehiculo.id"],
+      order: [[Sequelize.literal("total_registros"), "DESC"]],
+      limit: 10,
+    });
+  }
+
+  return [];
 };
+
 
 // TOP vehículos con parqueadero
 export const getTopVehiculos = async () => {
