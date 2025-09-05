@@ -7,13 +7,21 @@ import db from "./database/db.js";
 
 import rutas from "./routes/index.routes.js";
 
+import { seedData } from "./seed.js";
+
 dotenv.config();
 
-db.authenticate()
-  .then(() => {
+async function init() {
+  try {
+    await db.authenticate();
     console.log("Database connection successful");
-  })
-  .catch((error) => console.log("Connection error: ", error));
+    // await db.sync({ alter: true });
+    await seedData();
+  } catch (error) {
+    console.error("Connection error: ", error);
+  }
+}
+init();
 
 const app = express();
 
