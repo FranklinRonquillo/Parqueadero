@@ -1,9 +1,9 @@
 import { Vehiculo } from "../models/vehiculo.js";
 import { Entrada } from "../models/entrada.js";
-import { ConflictError } from "../utils/errors.js";
+import { Parqueadero } from "../models/parqueadero.js";
+import { ConflictError, NotFoundError } from "../utils/errors.js";
 
 export const crearVehiculoService = async ({ id, usuario_id }) => {
-
   const vehiculoExistente = await Vehiculo.findOne({ where: { id } });
   if (vehiculoExistente) {
     throw new ConflictError("Esta placa ya está registrada");
@@ -17,12 +17,17 @@ export const obtenerVehiculosService = async () => {
 };
 
 export const obtenerVehiculosPorParqueaderoService = async (parqueadero_id) => {
+  const parqueadero = await Parqueadero.findByPk(parqueadero_id);
+  if (!parqueadero) {
+    throw new NotFoundError("No existe el parqueadero");
+  }
+
   const vehiculos = await Vehiculo.findAll({
     where: { parqueadero_id },
   });
 
   if (!vehiculos.length) {
-    return [];
+    return "No hay vehículos registrados en este parqueadero";
   }
 
   const entradas = await Entrada.findAll({
