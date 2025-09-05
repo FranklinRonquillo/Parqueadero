@@ -8,7 +8,7 @@ export const notificarUsuario = async (req, res, next) => {
 
   if (!email || !id || !destinatario || !mensaje || !parqueaderoId) {
     throw new BadRequestError(
-      "Faltan datos obligatorios (id, mensaje, parqueaderoId)"
+      "Faltan datos obligatorios (id, destinatario, mensaje, parqueaderoId)"
     );
   }
 
