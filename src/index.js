@@ -5,14 +5,13 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import db from "./database/db.js";
 
-import rutas from "./routes/rutas.routes.js";
+import rutas from "./routes/index.routes.js";
 
 dotenv.config();
 
 db.authenticate()
   .then(() => {
     console.log("Database connection successful");
-    return db.sync(); // sincroniza modelos
   })
   .catch((error) => console.log("Connection error: ", error));
 
