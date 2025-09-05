@@ -1,12 +1,15 @@
+import bcrypt from "bcrypt";
 import { Usuario } from "./models/usuario.js";
 
 export async function seedData() {
   try {
+    const hashedPassword = await bcrypt.hash("admin", 10);
+
     const [admin, created] = await Usuario.findOrCreate({
       where: { usuario: "admin@mail.com" },
       defaults: {
         nombre: "Admin",
-        pass: "admin",
+        pass: hashedPassword,
         rol: "Admin",
       },
     });
