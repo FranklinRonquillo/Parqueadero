@@ -5,6 +5,7 @@ import { NotFoundError } from "../utils/errors.js";
 export const notificarUsuarioService = async ({
   email,
   id,
+  destinatario,
   mensaje,
   parqueaderoId,
 }) => {
@@ -20,6 +21,7 @@ export const notificarUsuarioService = async ({
   const response = await axios.post(`${process.env.rutaMail}/enviarCorreo`, {
     email,
     id,
+    destinatario,
     mensaje,
     parqueaderoId,
   });

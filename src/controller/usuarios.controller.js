@@ -22,7 +22,7 @@ export const crearUsuario = async (req, res, next) => {
   }
 };
 
-export const obtenerUsuarios = async (res, next) => {
+export const obtenerUsuarios = async (req, res, next) => {
   try {
     const usuarios = await obtenerUsuariosService();
 

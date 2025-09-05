@@ -4,7 +4,7 @@ import {
   obtenerVehiculosPorParqueaderoService,
 } from "../services/vehiculos.service.js";
 
-export const crearVehiculo = async (req, res) => {
+export const crearVehiculo = async (req, res, next) => {
   try {
     const { id, usuario_id } = req.body;
 
@@ -19,7 +19,7 @@ export const crearVehiculo = async (req, res) => {
   }
 };
 
-export const obtenerVehiculos = async (req, res) => {
+export const obtenerVehiculos = async (req, res, next) => {
   try {
     const vehiculos = await obtenerVehiculosService();
 
@@ -32,7 +32,7 @@ export const obtenerVehiculos = async (req, res) => {
   }
 };
 
-export const obtenerVehiculosPorParqueadero = async (req, res) => {
+export const obtenerVehiculosPorParqueadero = async (req, res, next) => {
   try {
     const { id } = req.params;
 
