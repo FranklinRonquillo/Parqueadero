@@ -13,6 +13,6 @@ router.post("/create", validarVehiculo, crearVehiculo);
 
 router.get("/get", soloAdmin, obtenerVehiculos);
 
-router.get("/get/:id", soloAdmin, obtenerVehiculosPorParqueadero);
+router.get("/get/:nombre", soloAdmin, obtenerVehiculosPorParqueadero);
 
 export default router;

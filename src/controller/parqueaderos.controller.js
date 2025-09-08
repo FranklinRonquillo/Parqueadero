@@ -30,17 +30,18 @@ export const crearParqueadero = async (req, res, next) => {
 
 export const editarParqueadero = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    
+    const { nombreParam } = req.params;
     const { nombre, capacidad, costo_hora } = req.body;
 
-    if (nombre == null || capacidad == null || costo_hora == null) {
+    if (nombreParam == null || nombre == null || capacidad == null || costo_hora == null) {
       throw new BadRequestError(
         "Los campos 'nombre', 'capacidad' y 'costo_hora' son obligatorios"
       );
     }
 
     const parqueaderoNuevo = await editarParqueaderoService({
-      id,
+      nombreParam,
       nombre,
       capacidad,
       costo_hora,
@@ -57,13 +58,13 @@ export const editarParqueadero = async (req, res, next) => {
 
 export const eliminarParqueadero = async (req, res, next) => {
   try {
-    const { id, habilitado } = req.params;
+    const { nombre, habilitado } = req.params;
 
-    if (!id) {
+    if (!nombre) {
       throw new BadRequestError("El parámetro 'id' del parqueadero es obligatorio");
     }
 
-    const parqueadero = await eliminarParqueaderoService(id, habilitado);
+    const parqueadero = await eliminarParqueaderoService(nombre, habilitado);
 
     res.status(200).json({
       mensaje: "Parqueadero modificado correctamente",
@@ -88,13 +89,13 @@ export const obtenerParqueaderos = async (req, res, next) => {
 
 export const agregarSocio = async (req, res, next) => {
   try {
-    const { id, usuario_id } = req.body;
+    const { nombre, usuario_id } = req.body;
 
-    if (!id || !usuario_id) {
+    if (!nombre || !usuario_id) {
       throw new BadRequestError("Los campos 'id' y 'usuario_id' son obligatorios");
     }
 
-    await agregarSocioService({ id, usuario_id });
+    await agregarSocioService({ nombre, usuario_id });
 
     res.status(200).json({
       mensaje: "Socio agregado correctamente al parqueadero",
@@ -121,15 +122,15 @@ export const listarParqueaderosSocio = async (req, res, next) => {
 export const listarVehiculosDeParqueadero = async (req, res, next) => {
   try {
     const socioId = req.usuario.id;
-    const { parqueadero_id } = req.params;
+    const { nombre } = req.params;
 
-    if (!parqueadero_id) {
+    if (!nombre) {
       throw new BadRequestError("El campo 'parqueadero_id' es obligatorio");
     }
 
     const vehiculos = await listarVehiculosDeParqueaderoService({
       socioId,
-      parqueadero_id,
+      nombre
     });
 
     res.status(200).json({

@@ -34,15 +34,15 @@ export const obtenerVehiculos = async (req, res, next) => {
 
 export const obtenerVehiculosPorParqueadero = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { nombre } = req.params;
 
-    if (!id) {
+    if (!nombre) {
       return res.status(400).json({
         mensaje: "El parámetro 'id' del parqueadero es obligatorio",
       });
     }
 
-    const vehiculosConEntrada = await obtenerVehiculosPorParqueaderoService(id);
+    const vehiculosConEntrada = await obtenerVehiculosPorParqueaderoService(nombre);
 
     res.status(200).json({
       mensaje: "Vehículos obtenidos correctamente",

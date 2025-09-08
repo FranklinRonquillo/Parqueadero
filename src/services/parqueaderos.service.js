@@ -1,53 +1,74 @@
 import { Parqueadero } from "../models/parqueadero.js";
 import { Entrada } from "../models/entrada.js";
 import { Vehiculo } from "../models/vehiculo.js";
-import { BadRequestError, NotFoundError, ForbiddenError } from "../utils/errors.js";
+import { Usuario } from "../models/usuario.js";
+import {
+  BadRequestError,
+  NotFoundError,
+  ForbiddenError,
+} from "../utils/errors.js";
 
 export const crearParqueaderoService = async ({
   nombre,
   capacidad,
   costo_hora,
 }) => {
+  const parqueadero = await Parqueadero.findOne({ where: { nombre } });
+  if (parqueadero) {
+    throw new BadRequestError("El parqueadero ya existe");
+  }
   return await Parqueadero.create({ nombre, capacidad, costo_hora });
 };
 
 export const editarParqueaderoService = async ({
-  id,
+  nombreParam,
   nombre,
   capacidad,
   costo_hora,
 }) => {
-  const parqueadero = await Parqueadero.findByPk(id);
+  const parqueadero = await Parqueadero.findOne({ where: { nombre:nombreParam } });
 
   if (!parqueadero) {
     throw new NotFoundError("Parqueadero no encontrado");
   }
 
-  if (capacidad < parqueadero.capacidad) {
+  if (nombre && nombre !== parqueadero.nombre) {
+    const existente = await Parqueadero.findOne({ where: { nombre } });
+    if (existente) {
+      throw new BadRequestError("Ya existe otro parqueadero con ese nombre");
+    }
+  }
 
+  if (capacidad && capacidad < parqueadero.capacidad) {
     const vehiculosOcupando = await Vehiculo.count({
-      where: { parqueadero_id: id },
+      where: { parqueadero_id: parqueadero.id },
     });
 
     if (vehiculosOcupando > capacidad) {
-      throw new BadRequestError( 
+      throw new BadRequestError(
         `No se puede reducir la capacidad a ${capacidad}. Actualmente hay ${vehiculosOcupando} vehículos dentro.`
       );
     }
   }
 
-  await parqueadero.update({ nombre, capacidad, costo_hora });
+  parqueadero.nombre = nombre || parqueadero.nombre;
+  parqueadero.capacidad = capacidad || parqueadero.capacidad;
+  parqueadero.costo_hora = costo_hora || parqueadero.costo_hora;
+
+  await parqueadero.save();
+
   return parqueadero;
 };
 
-export const eliminarParqueaderoService = async (id, habilitado) => {
-  const parqueadero = await Parqueadero.findByPk(id);
+
+export const eliminarParqueaderoService = async (nombre, habilitado) => {
+  const parqueadero = await Parqueadero.findOne({ where: { nombre } });
 
   if (!parqueadero) {
     throw new NotFoundError("Parqueadero no encontrado");
   }
 
-  if (habilitado==="1") {
+  if (habilitado === "1") {
     await parqueadero.update({ habilitado: true });
   } else {
     await parqueadero.update({ habilitado: false });
@@ -56,15 +77,20 @@ export const eliminarParqueaderoService = async (id, habilitado) => {
   return parqueadero;
 };
 
-
 export const obtenerParqueaderosService = async () => {
   return await Parqueadero.findAll();
 };
 
-export const agregarSocioService = async ({ id, usuario_id }) => {
-  const parqueadero = await Parqueadero.findByPk(id);
+export const agregarSocioService = async ({ nombre, usuario_id }) => {
+  const parqueadero = await Parqueadero.findOne({ where: { nombre } });
   if (!parqueadero) {
     throw new NotFoundError("Parqueadero no encontrado");
+  }
+  const usuarioExistente = await Usuario.findOne({
+    where: { id: usuario_id },
+  });
+  if (!usuarioExistente) {
+    throw new NotFoundError("Usuario no encontrado");
   }
 
   await parqueadero.update({ usuario_id });
@@ -72,15 +98,17 @@ export const agregarSocioService = async ({ id, usuario_id }) => {
 };
 
 export const listarParqueaderosSocioService = async (socioId) => {
-  return await Parqueadero.findAll({ where: { usuario_id: socioId, habilitado: true } });
+  return await Parqueadero.findAll({
+    where: { usuario_id: socioId, habilitado: true },
+  });
 };
 
 export const listarVehiculosDeParqueaderoService = async ({
   socioId,
-  parqueadero_id,
+  nombre
 }) => {
   const parqueadero = await Parqueadero.findOne({
-    where: { id: parqueadero_id, usuario_id: socioId, habilitado: true },
+    where: { nombre, usuario_id: socioId, habilitado: true },
   });
 
   if (!parqueadero) {
@@ -88,12 +116,13 @@ export const listarVehiculosDeParqueaderoService = async ({
   }
 
   const entradas = await Entrada.findAll({
-    where: { parqueadero_id, horaSalida: null },
+    where: { parqueadero_id: parqueadero.id, horaSalida: null },
     include: [{ model: Vehiculo, as: "vehiculo" }],
   });
 
   return entradas.map((e) => ({
     id: e.vehiculo.id,
+    nombre: e.vehiculo.nombre,
     placa: e.vehiculo.placa,
     tipo: e.vehiculo.tipo,
     horaEntrada: e.horaEntrada,

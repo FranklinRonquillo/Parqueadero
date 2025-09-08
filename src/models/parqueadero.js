@@ -10,6 +10,7 @@ const Parqueadero = sequelize.define("parqueaderos", {
   },
   nombre: {
     type: DataTypes.STRING,
+    unique: true,
   },
   usuario_id: {
     type: DataTypes.INTEGER,

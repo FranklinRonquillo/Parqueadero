@@ -19,9 +19,9 @@ router.get("/get",soloAdmin, obtenerParqueaderos);
 
 router.post("/create", validarParqueadero , soloAdmin, crearParqueadero);
 
-router.post("/editar/:id", validarParqueadero, soloAdmin, editarParqueadero);
+router.post("/editar/:nombreParam", validarParqueadero, soloAdmin, editarParqueadero);
 
-router.put("/delete/:id/:habilitado", soloAdmin, eliminarParqueadero);
+router.put("/delete/:nombre/:habilitado", soloAdmin, eliminarParqueadero);
 
 router.post("/addSocio",soloAdmin, agregarSocio);
 
@@ -33,7 +33,7 @@ router.get(
 );
 
 router.get(
-  "/:parqueadero_id",
+  "/:nombre",
   soloSocio,
   listarVehiculosDeParqueadero
 );

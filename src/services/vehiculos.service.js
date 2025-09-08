@@ -17,14 +17,14 @@ export const obtenerVehiculosService = async () => {
   return await Vehiculo.findAll();
 };
 
-export const obtenerVehiculosPorParqueaderoService = async (parqueadero_id) => {
-  const parqueadero = await Parqueadero.findByPk(parqueadero_id);
+export const obtenerVehiculosPorParqueaderoService = async (nombre) => {
+  const parqueadero = await Parqueadero.findOne({ where: { nombre } });
   if (!parqueadero) {
     throw new NotFoundError("No existe el parqueadero");
   }
 
   const vehiculos = await Vehiculo.findAll({
-    where: { parqueadero_id },
+    where: { parqueadero_id: parqueadero.id },
   });
 
   if (!vehiculos.length) {
